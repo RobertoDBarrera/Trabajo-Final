@@ -41,6 +41,7 @@ namespace GestionApp.Controllers
             return instalacion;
         }
 
+        //punto 4
         [HttpGet("filtroinst")]
         public dynamic Filtroinst(Boolean exitosa)
         {
@@ -50,6 +51,7 @@ namespace GestionApp.Controllers
                 .Where(item => item.Exitosa == true)
                 .Select(item => new
                 {
+                    item.Exitosa,
                     Aplicacion = item.App.Nombre,
                     Operario = item.Operario.Nombre,
                     item.Operario.Apellido
@@ -63,6 +65,7 @@ namespace GestionApp.Controllers
                                 .Where(item => item.Exitosa == false)
                                 .Select(item => new
                                 {
+                                    item.Exitosa,
                                     Aplicacion = item.App.Nombre,
                                     Operario = item.Operario.Nombre,
                                     item.Operario.Apellido
@@ -73,21 +76,25 @@ namespace GestionApp.Controllers
         }
 
         // GET: api/instalaciones/instxdia
+        //punto opcional
         [HttpGet("instxdia")]
         public dynamic Instxdia(DateTime fecha)
         {
+            fecha = fecha.Date;
             return _context.Instalacion
-                .Where(item => item.Fecha == fecha)
-                .Select(item => new {
-                    item.Fecha,
-                    Operario = item.Operario.Nombre, 
-                    item.Operario.Apellido,
-                    //AppsInstaladas = item.
+                .Where(item => item.Fecha.Date == fecha)
+                .Select(item => new
+                {
+                    Fecha = item.Fecha.Date,
+                    Nombre_Operario = item.Operario.Nombre,
+                    Apellido_Operario = item.Operario.Apellido,
+                    Apps_instaladas = item.Operario.Instalaciones.Where(ok=>item.Exitosa==true).Select(inst=> new {Estado=inst.Exitosa,Nombre=inst.App.Nombre }).ToList()
+                }).ToList();
 
-                })
-                .ToList();
 
         }
+
+
 
         // PUT: api/Instalaciones/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -117,7 +124,8 @@ namespace GestionApp.Controllers
                 }
             }
 
-            return NoContent();
+            return CreatedAtAction("GetInstalacion", new { id = instalacion.InstalacionId }, instalacion);
+            //return NoContent();
         }
 
         // POST: api/Instalaciones

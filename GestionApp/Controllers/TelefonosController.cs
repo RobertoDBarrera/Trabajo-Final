@@ -29,43 +29,89 @@ namespace GestionApp.Controllers
             return await _context.Telefono.ToListAsync();
         }
 
-        //GET: api/Telefonos/buscar
-        
-        [HttpGet("buscar")]
-        public dynamic Buscar()
+        //punto 5
+        //filtro x sensor
+        [HttpGet("filtroxsensor")]
+        public dynamic Filtroxsensor(int id)
         {
-            return  _context.Telefono
-                .Select(item=> new 
-                { 
+            var Tel = _context.Sensor.Find(id);
+
+            return _context.Sensor
+                .Where(item => item.SensorId == id)
+                .Select(item => new
+                {
+                    Nombre_Sensor = item.Nombre,
+                    listatelefonos = item.Telefonos.Select(tel => new
+                    {
+                        Marca=tel.Marca,
+                        Modelo=tel.Modelo,
+                        Precio=tel.Precio
+                    }).ToList()
+                }).ToList();
+
+        }
+
+        //filtro x app instalada
+        [HttpGet("filtroxapp")]
+        public dynamic Filtroxapp(int id)
+        {
+            var Tel = _context.App.Find(id);
+
+            return _context.App
+                .Where(item => item.AppId == id)
+                .Select(item => new
+                {
+                    Nombre_App = item.Nombre,
+                    listatelefonos = item.Instalaciones.Select(inst => new
+                    {
+                        Telefono_Marca = inst.Telefono.Marca,
+                        Telefono_Modelo = inst.Telefono.Modelo,
+                        Telefono_Precio = inst.Telefono.Precio
+                    }).ToList()
+                }).ToList();
+
+        }
+        //fin punto 5
+
+        //GET: api/Telefonos/buscar
+        //punto 2
+        [HttpGet("telysensores")]
+        public dynamic Telysensores()
+        {
+            return _context.Telefono
+                .Select(item => new
+                {
                     item.Marca,
                     item.Modelo,
-                    item.Sensores
-
+                    item.Precio,
+                    ListaSensores=item.Sensores.Select(sen => new
+                    {
+                        sen.Nombre
+                    }).ToList()
                 }).ToList();
 
         }
 
         
+        //punto 3
         [HttpGet("telxid")]
         public dynamic Telxid(int id)
         {
             var Tel = _context.Telefono.Find(id);
-            
-            foreach (var obj in Tel.Instalaciones  )
-            {
 
-            }
             return _context.Telefono
                 .Where(item => item.TelefonoId == id)
                 .Select(item => new
-                {   
+                {
                     Marca = item.Marca,
                     Modelo = item.Modelo,
-                                        
-                    //Instalacion Instalaciones = item.Instalaciones
-                    
-                })
-                .ToList(); 
+                    listaappsinstaladas = item.Instalaciones.Select(app => new
+                    {
+                        Aplicacion=app.App.Nombre,
+                        Nombre_Operario=app.Operario.Nombre,
+                        Apellido_Operario=app.Operario.Apellido
+                    }).ToList()
+                }).ToList(); 
 
         }
         
@@ -139,7 +185,8 @@ namespace GestionApp.Controllers
                 }
             }
 
-            return NoContent();
+            return CreatedAtAction("GetTelefono", new { id = telefono.TelefonoId }, telefono);
+            //return NoContent();
         }
 
         // POST: api/Telefonos
