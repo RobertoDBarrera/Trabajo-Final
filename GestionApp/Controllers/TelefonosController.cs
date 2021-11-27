@@ -98,7 +98,10 @@ namespace GestionApp.Controllers
         public dynamic Telxid(int id)
         {
             var Tel = _context.Telefono.Find(id);
-
+            if (Tel == null)
+            {
+                return NotFound();
+            }
             return _context.Telefono
                 .Where(item => item.TelefonoId == id)
                 .Select(item => new
