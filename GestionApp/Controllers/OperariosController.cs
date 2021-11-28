@@ -41,7 +41,26 @@ namespace GestionApp.Controllers
             return operario;
         }
 
-        
+        // GET: api/operario/instxdia
+        //punto opcional
+        [HttpGet("instxdia")]
+        public dynamic Instxdia(DateTime fecha)
+        {
+            fecha = fecha.Date;
+            return _context.Operario
+                .Select(item => new
+                {
+                    item.Nombre,
+                    item.Apellido,
+                    appsInstaladas = _context.Instalacion
+                            .Where(i => i.Fecha.Date == fecha && 
+                                        i.Exitosa == true &&
+                                        i.Operario.OperarioId == item.OperarioId)
+                            .Count()
+
+                }).ToList();
+           
+        }
 
         // PUT: api/Operarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

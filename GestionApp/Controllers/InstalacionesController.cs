@@ -73,41 +73,7 @@ namespace GestionApp.Controllers
             }
         }
 
-        // GET: api/instalaciones/instxdia
-        //punto opcional
-        [HttpGet("instxdia")]
-        public dynamic Instxdia(DateTime fecha)
-        {
-            fecha = fecha.Date;
-            return _context.Operario
-                .Select(item => new
-                {
-                    
-                    appsinstaladas= _context.Instalacion.Where(i=> i.Fecha.Date==fecha && i.Exitosa==true && i.Operario.OperarioId==item.OperarioId ).Count()
-
-                }).ToList();
-            /*
-            return 
-                _context.Instalacion
-                .Where(item => item.Fecha.Date == fecha && item.Exitosa==true)
-                .Select(item => new
-                {
-                    Fecha = item.Fecha.Date.ToShortDateString(),
-                    Nombre_Operario = item.Operario.Nombre,
-                    Apellido_Operario = item.Operario.Apellido,
-                    
-                    Apps_instaladas = item.Operario.Instalaciones
-                                    .Where(ok=>ok.Exitosa==true).Count()                                                                    
-                                    /*.Select(inst=> new {
-                                        Estado = inst.Exitosa,
-                                        App = inst.App.Nombre
-                                       
-                                    })
-                                   
-                }).ToList();*/
-                
-
-        }
+        
 
 
 

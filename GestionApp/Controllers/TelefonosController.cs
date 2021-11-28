@@ -34,18 +34,16 @@ namespace GestionApp.Controllers
         [HttpGet("filtroxsensor")]
         public dynamic Filtroxsensor(int id)
         {
-            var Tel = _context.Sensor.Find(id);
-
-            return _context.Sensor
+           return _context.Sensor
                 .Where(item => item.SensorId == id)
                 .Select(item => new
                 {
                     Nombre_Sensor = item.Nombre,
                     listatelefonos = item.Telefonos.Select(tel => new
                     {
-                        Marca=tel.Marca,
-                        Modelo=tel.Modelo,
-                        Precio=tel.Precio
+                        marca = tel.Marca,
+                        modelo = tel.Modelo,
+                        precio = tel.Precio
                     }).ToList()
                 }).ToList();
 
@@ -55,9 +53,7 @@ namespace GestionApp.Controllers
         [HttpGet("filtroxapp")]
         public dynamic Filtroxapp(int id)
         {
-            var Tel = _context.App.Find(id);
-
-            return _context.App
+             return _context.App
                 .Where(item => item.AppId == id)
                 .Select(item => new
                 {
@@ -106,8 +102,8 @@ namespace GestionApp.Controllers
                 .Where(item => item.TelefonoId == id)
                 .Select(item => new
                 {
-                    Marca = item.Marca,
-                    Modelo = item.Modelo,
+                    marca = item.Marca,
+                    modelo = item.Modelo,
                     listaappsinstaladas = item.Instalaciones.Select(app => new
                     {
                         Aplicacion=app.App.Nombre,
