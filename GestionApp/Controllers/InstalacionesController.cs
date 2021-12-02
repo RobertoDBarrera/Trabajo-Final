@@ -52,10 +52,11 @@ namespace GestionApp.Controllers
                 .Select(item => new
                 {
                     item.Exitosa,
+                    item.Fecha.Date,
                     Aplicacion = item.App.Nombre,
                     Operario = item.Operario.Nombre,
                     item.Operario.Apellido
-
+                    
                 }).ToList();
             }
             else
@@ -65,6 +66,7 @@ namespace GestionApp.Controllers
                                 .Select(item => new
                                 {
                                     item.Exitosa,
+                                    item.Fecha.Date,
                                     Aplicacion = item.App.Nombre,
                                     Operario = item.Operario.Nombre,
                                     item.Operario.Apellido

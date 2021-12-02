@@ -43,7 +43,7 @@ namespace GestionApp.Controllers
 
         // GET: api/operario/instxdia
         //punto opcional
-        [HttpGet("instxdia")]
+        [HttpGet("opcional/instxdia")]
         public dynamic Instxdia(DateTime fecha)
         {
             fecha = fecha.Date;

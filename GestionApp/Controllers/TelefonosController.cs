@@ -29,6 +29,43 @@ namespace GestionApp.Controllers
             return await _context.Telefono.ToListAsync();
         }
 
+        [HttpGet("filtroappsen")]
+        public dynamic Filtroappsen(int idapp, int idsen)
+        {
+            if (idsen !=0 && idapp !=0 )
+            {
+                return BadRequest();
+            }
+            if (idsen != 0)
+            {
+                return _context.Sensor
+                 .Where(item => item.SensorId == idsen)
+                 .Select(item => new
+                 {
+                     Nombre_Sensor = item.Nombre,
+                     listatelefonos = item.Telefonos.Select(tel => new
+                     {
+                         marca = tel.Marca,
+                         modelo = tel.Modelo,
+                         precio = tel.Precio
+                     }).ToList()
+                 }).ToList();
+            }
+            return _context.App
+                .Where(item => item.AppId == idapp)
+                .Select(item => new
+                {
+                    Nombre_App = item.Nombre,
+                    listatelefonos = item.Instalaciones.Select(inst => new
+                    {
+                        Telefono_Marca = inst.Telefono.Marca,
+                        Telefono_Modelo = inst.Telefono.Modelo,
+                        Telefono_Precio = inst.Telefono.Precio
+                    }).ToList()
+                }).ToList();
+
+        }
+
         //punto 5
         //filtro x sensor
         [HttpGet("filtroxsensor")]
