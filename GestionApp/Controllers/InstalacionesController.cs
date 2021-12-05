@@ -88,6 +88,25 @@ namespace GestionApp.Controllers
             {
                 return BadRequest();
             }
+            
+            var apps = await _context.App.FindAsync(instalacion.AppId);
+            var tel = await _context.Telefono.FindAsync(instalacion.TelefonoId);
+            var  op = await _context.Operario.FindAsync(instalacion.OperarioId);
+
+            if (apps == null)
+            {
+                return NotFound();
+            }
+
+            if (tel == null)
+            {
+                return NotFound();
+            }
+
+            if (op == null)
+            {
+                return NotFound();
+            }
 
             _context.Entry(instalacion).State = EntityState.Modified;
 

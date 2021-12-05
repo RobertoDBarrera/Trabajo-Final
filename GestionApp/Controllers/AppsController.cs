@@ -22,23 +22,31 @@ namespace GestionApp.Controllers
 
         // GET: api/Apps
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<App>>> GetApp()
+        public dynamic GetApp()
         {
-            return await _context.App.ToListAsync();
+            return _context.App.Select(item=>new {
+                                                    item.AppId,
+                                                    item.Nombre,
+                                                    
+                                                 });
         }
 
         // GET: api/Apps/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<App>> GetApp(int id)
+        public dynamic GetApp(int id)
         {
-            var app = await _context.App.FindAsync(id);
+            var app = _context.App.Find(id);
 
             if (app == null)
             {
                 return NotFound();
             }
 
-            return app;
+            return _context.App.Where(a=> a.AppId==id)
+                .Select(item=>new { 
+                                            item.AppId,
+                                            item.Nombre
+                                                  });
         }
         
         // PUT: api/Apps/5

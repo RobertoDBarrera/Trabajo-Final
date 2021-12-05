@@ -24,9 +24,16 @@ namespace GestionApp.Controllers
         // GET: api/Telefonos
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Telefono>>> GetTelefono()
+        public dynamic GetTelefono()
         {
-            return await _context.Telefono.ToListAsync();
+            return _context.Telefono.Select(item =>new
+                        {
+                            item.Marca,
+                            item.Modelo,
+                            item.Precio,
+                            sensores = item.Sensores.Select(i=>new {i.Nombre})
+                         }
+                ).ToList();
         }
 
         [HttpGet("filtroappsen")]
@@ -156,16 +163,23 @@ namespace GestionApp.Controllers
         // GET: api/Telefonos/5
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Telefono>> GetTelefono(int id)
+        public dynamic GetTelefono(int id)
         {
-            var telefono = await _context.Telefono.FindAsync(id);
+            var telefono =  _context.Telefono.Find(id);
 
             if (telefono == null)
             {
                 return NotFound();
             }
-            
-                return telefono;
+
+            return _context.Telefono.Where(tel=> tel.TelefonoId == id)
+                .Select(item => new {
+                    item.Marca,
+                    item.Modelo,
+                    item.Precio,
+                    sensores = item.Sensores.Select(s => new { s.Nombre }),
+                    apps = item.Instalaciones.Select(a => new { a.App.Nombre })
+            });
 
         }
 
@@ -175,12 +189,18 @@ namespace GestionApp.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTelefono(int id, Telefono telefono)
         {
+            var tel = await _context.Telefono.FindAsync(id);
+
+            if (tel ==null)
+            {
+                return BadRequest();
+            }
             if (id != telefono.TelefonoId)
             {
                 return BadRequest();
             }
 
-            var tel = await _context.Telefono.FindAsync(id);
+            
 
             if (tel.Sensores != null)
             {
@@ -231,10 +251,16 @@ namespace GestionApp.Controllers
         [HttpPost]
         public async Task<ActionResult<Telefono>> PostTelefono(Telefono tel)
         {
-            
+            if (tel.SensoresList == null) 
+            { 
+                return BadRequest(); }
             foreach (var item in tel.SensoresList)
             {
                 Sensor s = await _context.Sensor.FindAsync(item);
+                if (s == null)
+                {
+                    return BadRequest();
+                }
                 tel.Sensores.Add(s);
                               
                          

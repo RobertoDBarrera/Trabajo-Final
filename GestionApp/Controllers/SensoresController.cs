@@ -22,23 +22,23 @@ namespace GestionApp.Controllers
 
         // GET: api/Sensores
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Sensor>>> GetSensor()
+        public dynamic GetSensor()
         {
-            return await _context.Sensor.ToListAsync();
+            return  _context.Sensor.Select(item=>new { item.SensorId,item.Nombre}).ToList();
         }
 
         // GET: api/Sensores/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Sensor>> GetSensor(int id)
+        public dynamic GetSensor(int id)
         {
-            var sensor = await _context.Sensor.FindAsync(id);
+            var sensor =  _context.Sensor.Find(id);
 
             if (sensor == null)
             {
                 return NotFound();
             }
 
-            return sensor;
+            return _context.Sensor.Where(s=>s.SensorId==id).Select(item=>new {item.SensorId,item.Nombre});
         }
 
         // PUT: api/Sensores/5

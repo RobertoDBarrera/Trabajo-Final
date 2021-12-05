@@ -22,29 +22,46 @@ namespace GestionApp.Controllers
 
         // GET: api/Operarios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Operario>>> GetOperario()
+        public dynamic GetOperario()
         {
-            return await _context.Operario.ToListAsync();
+            return _context.Operario.Select(item=> new { item.OperarioId,item.Nombre,item.Apellido}).ToList();
         }
 
         // GET: api/Operarios/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Operario>> GetOperario(int id)
+        public dynamic GetOperario(int id)
         {
-            var operario = await _context.Operario.FindAsync(id);
+            var operario = _context.Operario.Find(id);
 
             if (operario == null)
             {
                 return NotFound();
             }
 
-            return operario;
+            return _context.Operario.Where(oper=> oper.OperarioId==id).Select(item=>new {item.OperarioId,item.Nombre,item.Apellido });
         }
 
+        [HttpGet("opcional/instxdia")]
+        public dynamic Instxdia(DateTime desde, DateTime hasta)
+        {
+            desde = desde.Date;
+            hasta = hasta.Date;
+            return _context.Operario
+                .Select(item => new
+                {
+                    item.Nombre,
+                    item.Apellido,
+                    appsInstaladas = _context.Instalacion
+                            .Where(i =>  i.Operario.OperarioId == item.OperarioId && i.Fecha.Date >= desde && i.Fecha.Date <= hasta ).Count()
+                            
+
+                }).ToList();
+
+        }
         // GET: api/operario/instxdia
         //punto opcional
-        [HttpGet("opcional/instxdia")]
-        public dynamic Instxdia(DateTime fecha)
+        [HttpGet("opcional/instxdias")]
+        public dynamic Instxdias(DateTime fecha)
         {
             fecha = fecha.Date;
             return _context.Operario
