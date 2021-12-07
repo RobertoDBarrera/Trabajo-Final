@@ -41,27 +41,33 @@ namespace GestionApp.Controllers
             return _context.Operario.Where(oper=> oper.OperarioId==id).Select(item=>new {item.OperarioId,item.Nombre,item.Apellido });
         }
 
-        [HttpGet("opcional/instxdia")]
-        public dynamic Instxdia(DateTime desde, DateTime hasta)
+        [HttpGet("opcional/instxdias")]
+        public dynamic Instxdias(DateTime desde, DateTime hasta)
         {
             desde = desde.Date;
             hasta = hasta.Date;
+            var Instalaciones = _context.Instalacion;
             return _context.Operario
                 .Select(item => new
                 {
                     item.Nombre,
                     item.Apellido,
                     appsInstaladas = _context.Instalacion
-                            .Where(i =>  i.Operario.OperarioId == item.OperarioId && i.Fecha.Date >= desde && i.Fecha.Date <= hasta ).Count()
-                            
-
+                            .Where(i => i.Operario.OperarioId == item.OperarioId && i.Exitosa==true).Select(a => new
+                            {
+                                a.Fecha,
+                                instaladas = _context.Instalacion
+                                    .GroupBy(inst => inst.Fecha.Date >= desde && inst.Fecha.Date <= hasta).Count()
+                            }).ToList()
                 }).ToList();
 
+                 
         }
+
         // GET: api/operario/instxdia
         //punto opcional
-        [HttpGet("opcional/instxdias")]
-        public dynamic Instxdias(DateTime fecha)
+        [HttpGet("opcional/instxdia")]
+        public dynamic Instxdia(DateTime fecha)
         {
             fecha = fecha.Date;
             return _context.Operario
